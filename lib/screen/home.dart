@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
   List<ToDo> _foundToDo = [];
   List<ToDo> _completedToDo = [];
   List<ToDo> _pendingToDo = [];
-  bool _showCompleted = false;  // Flag to switch between completed and pending tasks
+  bool _showCompleted = false;  
 
   @override
   void initState() {
@@ -25,13 +25,11 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
-  // Method to categorize tasks into completed and pending
   void _filterTasks() {
     _completedToDo = todosList.where((todo) => todo.isDone).toList();
     _pendingToDo = todosList.where((todo) => !todo.isDone).toList();
   }
 
-  // Method to toggle between showing completed or pending tasks
   void _toggleView(bool showCompletedTasks) {
     setState(() {
       _showCompleted = showCompletedTasks;
@@ -74,46 +72,45 @@ class _HomeState extends State<Home> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Button to show Pending Tasks
+
                             ElevatedButton(
                               onPressed: () => _toggleView(false),
                               child: Text('Pending Tasks', 
                               style: TextStyle(color: !_showCompleted ? tdBGColor : tdBlack),),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: !_showCompleted ? tdRed : tdBGColor, // Change color based on selected button
+                                backgroundColor: !_showCompleted ? tdRed : tdBGColor, 
                               ),
                             ),
                             SizedBox(width: 10),
-                            // Button to show Completed Tasks
+
                             ElevatedButton(
                               onPressed: () => _toggleView(true),
                               child: Text('Completed Tasks', 
                               style: TextStyle(color: _showCompleted ? tdBGColor : tdBlack),),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: _showCompleted ? tdGreen : tdBGColor, // Change color based on selected button
+                                backgroundColor: _showCompleted ? tdGreen : tdBGColor, 
                               ),
                             ),
                           ],
                         ),
                       ),
-                      // Display the appropriate list based on the selected filter
-                      if (!_showCompleted) 
-                        // Pending Tasks
-                        for (ToDo todoo in _pendingToDo.reversed)
-                          ToDoItem(
-                            todo: todoo,
-                            onToDoChanged: _handleToDoChange,
-                            onDeleteItem: _deleteToDoItem,
-                          ),
-                      
-                      if (_showCompleted)
-                        // Completed Tasks
-                        for (ToDo todoo in _completedToDo.reversed)
-                          ToDoItem(
-                            todo: todoo,
-                            onToDoChanged: _handleToDoChange,
-                            onDeleteItem: _deleteToDoItem,
-                          ),
+
+                   if (!_showCompleted) 
+                      for (ToDo todoo in _foundToDo.where((todo) => !todo.isDone).toList().reversed)
+                        ToDoItem(
+                          todo: todoo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
+                        ),
+
+                    if (_showCompleted)
+                      for (ToDo todoo in _foundToDo.where((todo) => todo.isDone).toList().reversed)
+                        ToDoItem(
+                          todo: todoo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
+                        ),
+
                     ],
                   ),
                 ),
@@ -161,21 +158,21 @@ class _HomeState extends State<Home> {
   void _handleToDoChange(ToDo todo) {
     setState(() {
       todo.isDone = !todo.isDone;
-      _filterTasks(); // Refilter tasks after toggling the status
+      _filterTasks(); 
     });
   }
 
   void _deleteToDoItem(String id) {
     setState(() {
       todosList.removeWhere((item) => item.id == id);
-      _filterTasks();  // Refilter tasks after deletion
+      _filterTasks();  
     });
   }
 
   void _addToDoItem(ToDo newToDo) {
     setState(() {
       todosList.add(newToDo); 
-      _filterTasks();  // Refilter tasks after adding a new one
+      _filterTasks();  
     });
   }
 
@@ -184,16 +181,13 @@ class _HomeState extends State<Home> {
     if (enteredKeyword.isEmpty) {
       results = todosList;
     } else {
-      results = todosList
-          .where((item) => item.todoText!
-              .toLowerCase()
-              .contains(enteredKeyword.toLowerCase()))
-          .toList();
+      results = todosList.where((item) =>
+        item.todoText!.toLowerCase().contains(enteredKeyword.toLowerCase()))
+        .toList();
     }
 
     setState(() {
       _foundToDo = results;
-      _filterTasks();  // Refilter tasks after search
     });
   }
 
